@@ -2,35 +2,55 @@
 
 {% block content %}
 <div class="container mx-auto col-md-6">
+
     <div class="card text-center">
         <div class="card-header">
             Signup
         </div>
         <div class="card-body">
-            <form action="#">
+            <form action="{% url 'signup' %}" method="POST"
+            oninput='confirm_password.setCustomValidity(confirm_password.value != password.value ? "Passwords do not match." : "")'>
+                {% csrf_token %}
                 <div class="form-group">
-                    <label for="name" class="text-left d-block">Username</label>
-                    <input id="name" type="text" class="form-control" placeholder="Enter Username">
+                    <label for="username" class="text-left d-block">Username</label>
+                    <input id="username" type="text" class="form-control" placeholder="Enter Username" required name="username">
                 </div>
                 <div class="form-group">
                     <label for="email-id" class="text-left d-block">Email Address</label>
-                    <input id="email-id" type="text" class="form-control" placeholder="Enter Email address">
+                    <input id="-id" type="text" class="form-control" placeholder="Enter Email address" required name="email">
                 </div>
                 <div class="form-group">
-                    <label for="pass" class="text-left d-block">Password</label>
-                    <input id="pass" type="password" class="form-control" placeholder="Enter password...">
+                    <label for="userpass" class="text-left d-block">Password</label>
+                    <input id="userpass" type="password" class="form-control" placeholder="Enter password..." required name="password">
+                </div>
+                <div class="form-group">
+                    <label for="userpass2" class="text-left d-block">Confirm password</label>
+                    <input id="userpass2" type="password" class="form-control" placeholder="Enter password..." required name="confirm_password">
                 </div>
                 <div class="login-action mb-10 fix text-left d-block">
                     <p style="font-size: 0.85em;" class="text-muted">Your personal data will be used to support your experience throughout
                         this website, to manage access to your account, and for other purposes described in our <a
                             href="#">privacy policy</a>.</p>
                 </div>
-                <button href="login.html" class="btn btn-warning tp-in-btn w-100">login</button>
+                <button type="submit" class="btn btn-warning tp-in-btn w-100">login</button>
             </form>
         </div>
         <div class="card-footer text-muted">
             Already Have Account? Login
         </div>
     </div>
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="alert alert-danger alert-dismissible fade show d-flex" role="alert">
+        <span class="flex-grow-1">{{ message }}</span>
+        <button type="button" class="close ml-auto" data-dismiss="alert" aria-label="Close" style="font-size: 1.5rem;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    {% endif %}
+    {% endfor %}
+{% endif %}
 </div>
 {% endblock content %}

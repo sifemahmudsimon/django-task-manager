@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+<br><br>
 <div class="container mx-auto col-md-6">
 
     <div class="card text-center">
         <div class="card-header">
-            Signup
+            <h3>Sign Up</h3>
         </div>
         <div class="card-body">
             <form action="{% url 'signup' %}" method="POST"
@@ -32,11 +33,11 @@
                         this website, to manage access to your account, and for other purposes described in our <a
                             href="#">privacy policy</a>.</p>
                 </div>
-                <button type="submit" class="btn btn-warning tp-in-btn w-100">login</button>
+                <button type="submit" class="btn btn-warning tp-in-btn w-100">Signup</button>
             </form>
         </div>
         <div class="card-footer text-muted">
-            Already Have Account? Login
+            Already Have Account? <a href="{% url 'login' %}">Login</a>
         </div>
     </div>
     {% if messages %}

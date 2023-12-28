@@ -22,9 +22,12 @@
 </head>
 
 <body>
+  {% if user.is_authenticated %}
+  <div class="pl-3 text-muted">Wellcome! {{user.email}}</div>
+  {% endif %}
   
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Task Manager App</a>
+    <a class="navbar-brand" href="{% url 'index' %}">Task Manager App</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -36,12 +39,21 @@
         </li>
       </ul>
       <ul class="navbar-nav ml-auto"> <!-- This ul is aligned to the right -->
+        {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'signin' %}">Login</a>
+          <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning color-secondary tp-in-btn w-100">Logout</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link btn btn-secondary color-secondary tp-in-btn m-1 text-white" href="{% url 'login' %}">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+          <a class="nav-link btn btn-secondary color-secondary tp-in-btn m-1 text-white" href="{% url 'signup' %}">signup</a>
         </li>
+        {% endif %}  
       </ul>
     </div>
   </nav>
@@ -71,5 +83,22 @@
 
 
 </body>
+
+<script>
+  function updateColor(selectElement) {
+      var selectedPriority = selectElement.value;
+      if (selectedPriority === 'low') {
+          selectElement.style.backgroundColor = 'lightgreen';
+      } else if (selectedPriority === 'medium') {
+          selectElement.style.backgroundColor = 'lightyellow';
+      } else if (selectedPriority === 'high') {
+          selectElement.style.backgroundColor = 'lightcoral';
+      }
+  }
+
+  // To set the color initially based on the current state
+  var selectElement = document.querySelector('select[name="priority"]');
+  updateColor(selectElement);
+</script>
 
 </html>

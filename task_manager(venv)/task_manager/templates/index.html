@@ -1,6 +1,65 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-  <h1>Hello, i'm S M Simon</h1>
-  <img src="{% static 'images/image.jpg' %}" alt="image">
+<br><br>
+<form action="">
+  <div class="row">
+    <div class="col"><a href="" class="btn btn-warning">Add Task</a></div>
+    <div class="col">
+      <div class="input-group">
+        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+          aria-describedby="search-addon" />
+        <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+      </div>
+    </div>
+    <div class="col">
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Filter By
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#">Creation date</a>
+          <a class="dropdown-item" href="#">Due date</a>
+          <a class="dropdown-item" href="#">Priority</a>
+          <a class="dropdown-item" href="#">Completed Task</a>
+          <a class="dropdown-item" href="#">Active Task</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<hr>
+</form>
+{% for task in tasks  %}
+<div class="card" style="width: 18rem;">
+  <a href="{% url 'task_detail' task.id %}" style="text-decoration: none;color: black;">
+    <div class="card-body">
+      
+      <div class="row justify-content-center align-items-center" style="font-size: 0.8rem;">
+        <section class="col-8" >Deadline: {{task.due_date}}</section>
+        <section class="col-4"
+        style="{% if task.priority == 'low' %}background-color:grlightgreen{% elif task.priority == 'medium' %}background-color:lightyellow{% elif task.priority == 'high' %}background-color:lightcoral{% endif %}"
+        >{{task.priority}}</section>
+      </div>
+      <h5 class="card-title">{{task.title}}</h5>
+      <hr>
+      <p class="card-text">{{task.description}}</p>
+    </div>
+  </a>
+  <div class="row">
+    <div class="col">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="task_id" value="{{ task.id }}">
+            {% if task.task_complete %}
+            <input type="submit" name="submit" value="Task Completed" class="btn btn-warning btn-block" disabled>
+            {% else %}
+            <input type="submit" name="submit" value="Mark As Complete" class="btn btn-warning btn-block">
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+</div>
+{% endfor %}
 {% endblock content %}

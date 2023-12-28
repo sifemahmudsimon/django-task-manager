@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<br><br>
+<div class="container mx-auto">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card">
+
+
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-8">
+                        <label for=""><h5>Task Title</h5></label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ task.title }}" style="border: none; background-color: transparent;">
+
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <p class="col" for="last_update">Task Create:</p>
+                            <p class="col">{{task.created}}</p>
+                        </div>
+                        <div class="row">
+                            <p class="col" for="last_update">Last Update:</p>
+                            <p class="col">{{task.updated}}</p>
+                        </div>
+                        <div class="row">
+                            <label class="col" for="due_date">Deadline:</label>
+                            <input class="col" type="date" class="form-control" id="due_date" name="due_date"
+                            value="{{ task.due_date_formatted }}" style="border: none;">
+                        </div>
+                        <div class="row">
+                            <label class="col" for="due_date">Priority:</label>
+                            <select class="col" name="priority" onchange="updateColor(this)" style="border: none;">
+                            <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option>
+                            <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Medium</option>
+                            <option value="high" {% if task.priority == 'high' %}selected{% endif %}>High</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+
+                <textarea class="form-control" id="description" name="description" style="border:none">{{ task.description }}</textarea>
+
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex flex-row flex-wrap">
+                        <!-- Cards with images displayed horizontally -->
+                        {% for task_image in task.taskimage_set.all %}
+                        <a href="{{ task_image.image.url }}" target="_blank">
+                            <div class="card m-1" style="width: 10rem; height: 6rem; overflow: hidden;">
+                                <img src="{{ task_image.image.url }}" class="card-img-top" alt="..."
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </a>
+
+                        {% endfor %}
+                        
+                            <div class="card m-1 text-secondary" style="width: 10rem; height: 6rem; position: relative; border: 2px dashed gray;">
+                                <input type="file" name="image_uploads" accept="image/*" multiple style="width: 100%; height: 100%; opacity: 0; cursor: pointer; position: absolute; top: 0; left: 0;">
+                                <h5 style="height: 100%; display: flex; justify-content: center; align-items: center;">Add Image</h5>
+                                <input type="submit" name="upload_images" value="Upload" style="display: none;">
+                            </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+
+
+            <hr>
+            <div class="card-footer text-muted d-flex justify-content-between align-items-end">
+                <input type="submit" class="btn btn-warning" value="Save Details">
+                <span  class="text-right">Note: Click on the text to edit them</span>
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock content %}

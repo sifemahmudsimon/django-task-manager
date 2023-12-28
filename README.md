@@ -3,6 +3,7 @@
 The Task Manager App is a Django-based application designed to facilitate task organization and management. It provides a user-friendly interface to create, track, and manage tasks efficiently. Users can organize their tasks, set priorities, deadlines, and categorize them for better management.
 
 ## Features
+- **User Registration,Login,Password Reset:** User can register, login & password reset with a confirmation link in email.
 - **Task Creation:** Users can create tasks specifying details such as title, description, deadline, and priority.
 - **Task Organization:** Tasks can be categorized, edited, and deleted for better organization.
 - **Prioritization:** Ability to set task priorities to manage time effectively.

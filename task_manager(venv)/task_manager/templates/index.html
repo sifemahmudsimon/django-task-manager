@@ -36,38 +36,39 @@
 
 <hr>
 <div class="row">
-  {% for task in tasks  %}
+  {% for task in tasks %}
 <div class="col-4 py-2">
   <div class="card" style="width: 18rem;">
-    <a href="{% url 'task_detail' task.id %}" style="text-decoration: none;color: black;">
+    <a href="{% url 'task_detail' task.id %}" style="text-decoration: none; color: black;">
       <div class="card-body">
-        
         <div class="row justify-content-center align-items-center" style="font-size: 0.8rem;">
-          <section class="col-8" >Deadline: {{task.due_date}}</section>
+          <section class="col-8">Deadline: {{ task.due_date }}</section>
           <section class="col-4"
-          style="{% if task.priority == 'low' %}background-color:lightgreen{% elif task.priority == 'medium' %}background-color:lightyellow{% elif task.priority == 'high' %}background-color:lightcoral{% endif %}"
-          >{{task.priority}}</section>
+            style="{% if task.priority == 'low' %}background-color:lightgreen{% elif task.priority == 'medium' %}background-color:lightyellow{% elif task.priority == 'high' %}background-color:lightcoral{% endif %}">
+            {{ task.priority }}</section>
         </div>
-        <h5 class="card-title">{{task.title}}</h5>
+        <h5 class="card-title">{{ task.title }}</h5>
         <hr>
-        <p class="card-text">{{task.description}}</p>
+        <!-- Adjust the height of the description -->
+        <p class="card-text" style="height: 100px; overflow: hidden;">{{ task.description }}</p>
       </div>
     </a>
     <div class="row">
       <div class="col">
-          <form method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="task_id" value="{{ task.id }}">
-              {% if task.task_complete %}
-              <input type="submit" name="submit" value="Task Completed" class="btn btn-secondary btn-block" disabled>
-              {% else %}
-              <input type="submit" name="submit" value="Mark As Complete" class="btn btn-warning btn-block">
-              {% endif %}
-          </form>
+        <form method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="task_id" value="{{ task.id }}">
+          {% if task.task_complete %}
+          <input type="submit" name="submit" value="Task Completed" class="btn btn-secondary btn-block" disabled>
+          {% else %}
+          <input type="submit" name="submit" value="Mark As Complete" class="btn btn-warning btn-block">
+          {% endif %}
+        </form>
       </div>
     </div>
   </div>
 </div>
 {% endfor %}
+
 </div>
 {% endblock content %}

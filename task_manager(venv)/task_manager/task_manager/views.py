@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.files.base import ContentFile
+
+from django.db.models import Q #for complex querry
 
 from datetime import datetime
 # Create your views here.
@@ -12,13 +13,31 @@ from datetime import datetime
 def index(request):
     # Retrieve tasks associated with the currently logged-in user
     tasks = Task.objects.filter(user=request.user)
-    
+    query = request.GET.get('q')  # Get the search query from the URL parameter
+    filter_by = request.GET.get('filter')
+
+    if query:
+        # Filter tasks by title containing the search query
+        tasks = tasks.filter(Q(title__icontains=query))
+
+    if filter_by == 'creation_date':
+        tasks = tasks.order_by('created')  
+    elif filter_by == 'due_date':
+        tasks = tasks.order_by('due_date')
+    elif filter_by == 'priority':
+        tasks = tasks.order_by('priority') 
+        tasks = sorted(tasks, key=lambda x: ['high', 'medium', 'low'].index(x.priority))
+    elif filter_by == 'completed':
+        tasks = tasks.filter(task_complete=True)
+    elif filter_by == 'active':
+        tasks = tasks.filter(task_complete=False)
+
     context = {
         'tasks': tasks
     }
 
     if request.method == 'POST':
-        task_id = request.POST.get('task_id')  # Assuming the task_id is sent via POST
+        task_id = request.POST.get('task_id')  
         if task_id:
             task = Task.objects.get(pk=task_id)
             task.task_complete = True
@@ -38,7 +57,7 @@ def signup(request):
         # Check if username already exists
         if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists() :
             messages.error(request, 'Username or email already exists. Please try a different one.')
-            return redirect('signup')  # Redirect back to signup page
+            return redirect('signup')  
 
         # Create a new User 
         user = User (
@@ -48,7 +67,7 @@ def signup(request):
         user.set_password(password) #set algorithm for password hashing
         user.save()
         messages.success(request, 'Account created successfully! Please login.')
-        return redirect('login')  # Redirect to login page after successful signup
+        return redirect('login') 
     else:
         return render(request, 'registration/signup.html')
 
@@ -64,13 +83,49 @@ def signin(request):
             # Log the user in
             login(request, user)
             messages.success(request, 'Logged in successfully!')
-            return redirect('index')  # Redirect to some page after successful login
+            return redirect('index')  
         else:
             messages.error(request, 'Invalid username or password.')
-            return redirect('login')  # Redirect back to login page for retry
+            return redirect('login') 
 
     return render(request,'registration/login.html')
 
+@login_required(login_url='/login/')
+def task_entry(request):
+    if request.method == 'POST':
+        # Get all the field values
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        due_date_str = request.POST.get('due_date')
+        priority = request.POST.get('priority')
+        
+        # Ensure the due date is parsed properly
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date() if due_date_str else None
+        
+        # Retrieve the logged-in user
+        user = request.user
+        
+        # Create the Task object associated with the user
+        new_task = Task.objects.create(
+            title=title,
+            description=description,
+            due_date=due_date,
+            priority=priority,
+            user=user  # Associate the task with the logged-in user
+        )
+        new_task.save()
+
+        images = request.FILES.getlist('image_uploads') 
+        for image in images:
+            TaskImage.objects.create(task=new_task, image=image)  # Associate each image with the task      
+        return redirect('index')
+        
+      
+
+    return render(request, 'task_app/task_entry.html')
+
+
+@login_required(login_url='/login/')
 def task_detail(request,task_id):
 
     task=Task.objects.get(pk=task_id)
@@ -78,26 +133,27 @@ def task_detail(request,task_id):
     context = {
         'task': task
     }
+    
     if request.method == 'POST':
         task.title = request.POST.get('title')  # Update title
-        task.description = request.POST.get('description')  # Update description
-        
+        task.description = request.POST.get('description')  # Update description    
         due_date_str = request.POST.get('due_date')
         if due_date_str:
-            task.due_date = datetime.strptime(due_date_str, '%Y-%m-%d')  
-            
-
+            task.due_date = datetime.strptime(due_date_str, '%Y-%m-%d')          
         task.priority = request.POST.get('priority')  
         task.save()  # Save the updated task
 
+        if 'delete_task' in request.POST:
+            # Perform the deletion action
+            task.delete()
+            # Optionally, you can redirect the user after deletion
+            return redirect('index')
+    
         # Handle image uploads
-        if 'image_uploads' in request.FILES:
-            images = request.FILES.getlist('image_uploads')  # Get list of uploaded images
-            for image in images:
-                TaskImage.objects.create(task=task, image=image)  # Associate each image with the task
-        messages.success(request, 'Images uploaded successfully!')        
+        images = request.FILES.getlist('image_uploads')  # Get list of uploaded images
+        for image in images:
+            TaskImage.objects.create(task=task, image=image)  # Associate each image with the task    
         return redirect('task_detail', task_id=task.id)
                 
 
     return render(request,'task_app/task_detail.html', context)
-

@@ -58,19 +58,6 @@
     </div>
   </nav>
   <div class="container">
-    {% if messages %}
-                    {% for message in messages %}
-                    {% if message.tags == 'success' %}
-                    <div class="alert alert-success alert-dismissible fade show d-flex" role="alert">
-                        <span class="flex-grow-1">{{ message }}</span>
-                        <button type="button" class="close ml-auto" data-dismiss="alert" aria-label="Close" style="font-size: 1.5rem;">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
     {% block content %}
 
     {% endblock content %}

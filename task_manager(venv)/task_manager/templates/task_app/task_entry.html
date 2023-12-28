@@ -3,65 +3,81 @@
 {% block content %}
 <br><br>
 <div class="container mx-auto">
+    <form method="POST" enctype="multipart/form-data" id="myForm">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-8">
+                        <label for=""><h5>Task Title</h5></label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="enter task title..." style="background-color: transparent;" required>
 
-    <div class="card">
-        <div class="card-header">
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <p class="col" for="last_update">Task Create:</p>
+                            <p class="col">Today</p>
+                        </div>
+                        
+                        <div class="row">
+                            <label class="col" for="due_date">Deadline:</label>
+                            <input class="col" type="date" class="form-control" id="due_date" name="due_date"
+                            value="{{ task.due_date_formatted }}" style="border: none;" required>
+                        </div>
+                        <div class="row">
+                            <label class="col" for="due_date">Priority:</label>
+                            <select class="col" name="priority" onchange="updateColor(this)" style="border: none;">
+                            <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option>
+                            <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Medium</option>
+                            <option value="high" {% if task.priority == 'high' %}selected{% endif %}>High</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+
+                <textarea class="form-control" id="description" name="description" placeholder="task description here..."></textarea>
+
+            </div>
+
+            <hr>
             <div class="row">
-                <div class="col-9">
-                    <h5 class="card-title">{{ task.title }}</h5>
-                </div>
                 <div class="col">
-                    <p>Created on: {{task.created}}</p>                    
-                    <p>Last Modifiled: {{task.updated}}</p>
-                    <p>Deadline: {{task.due_date}}</p>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <p>
-                {{task.description}}
-            </p>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col">
-                <div class="d-flex flex-row flex-wrap">
-                    <!-- Cards with images displayed horizontally -->
-                    {% for task_image in task.taskimage_set.all  %}
-                    <div class="card m-1" style="width: 17rem; height: 8rem; overflow: hidden;">
-                        <img src="{{ task_image.image.url }}" class="card-img-top" alt="..."
-                             style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    {% endfor %}
-                    <div class="card m-1 text-secondary" style="width: 14rem; height: 8rem; position: relative; background-color: rgb(230, 230, 230); border: 2px dashed grey;">
-                        <form method="POST" enctype="multipart/form-data" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-                            {% csrf_token %}
-                            <input type="file" name="task_image" accept="image/*" style="width: 100%; height: 100%; opacity: 0; cursor: pointer; position: absolute; top: 0; left: 0; z-index: 1;">
-                            <h5 style="height: 100%; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2;">Add Image</h5>
-                            <input type="submit" value="Upload" style="display: none;">
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        
-        
-          <hr>
-        <div class="card-footer text-muted">
-            <form method="POST">
-                {% csrf_token %}
+                    <div class="d-flex flex-row flex-wrap">
+                            <!-- Cards with images displayed horizontally -->
+                        {% for task_image in task.taskimage_set.all %}
+                        <a href="{{ task_image.image.url }}" target="_blank">
+                            <div class="card m-1" style="width: 10rem; height: 6rem; overflow: hidden;">
+                                <img src="{{ task_image.image.url }}" class="card-img-top" alt="..."
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </a>
 
-                {% if task.task_complete %}
-                <input type="submit" name="submit" value="Task Completed" class="btn btn-warning" disabled>
-                {% else %}
-                <input type="submit" name="submit" value="Mark As Complete" class="btn btn-warning">
-                {% endif %}
-                
-              </form>
-            <button class="btn btn-secondary">Edit</button>
+                        {% endfor %}
+                        
+                            <div class="card m-1 text-secondary" style="width: 10rem; height: 6rem; position: relative; border: 2px dashed gray;">
+                                <input type="file" name="image_uploads" accept="image/*" 
+                                multiple onchange="document.getElementById('myForm').submit();" 
+                                multiple style="width: 100%; height: 100%; opacity: 0; cursor: pointer; position: absolute; top: 0; left: 0;">
+                                <h5 style="height: 100%; display: flex; justify-content: center; align-items: center;">Add Image</h5>
+                                <input type="submit" name="upload_images" value="Save Details" style="display: none;">
+                            </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+
+
+
+            <hr>
+            <div class="card-footer text-muted d-flex justify-content-between align-items-end">
+                <input type="submit" name="submit" class="btn btn-warning" value="Add Details">
+            </div>
         </div>
-    </div>
+    </form>
 
 </div>
 {% endblock content %}

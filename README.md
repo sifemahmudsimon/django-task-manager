@@ -29,10 +29,22 @@ The Task Manager App is a Django-based application designed to facilitate task o
      ```
 
 2. **Run the Project:**
-   - Change directory to the project folder:
+   - Change directory to the project folder:  
      ```
      cd django-task-manager\task_manager(venv)\task_manager
      ```
+     all pips area already install to check pip list use terminal
+     ```
+     pip list
+     ```
+     if there is not any django or pillow install the pip or you can just skip this part
+     ```
+     pip install Django==4.2.1
+     pip install djangorestframework==3.14.0
+     pip install psycopg2==2.9.9
+     pip install Pillow==10.1.0
+     ```
+     
    - Start the Django development server:
      ```
      py manage.py runserver

@@ -43,5 +43,22 @@ The Task Manager App is a Django-based application designed to facilitate task o
      ```
      click on the link  http://127.0.0.1:8000/ from terminal or enter via a web browser.
 
+## Username & Passwords
+**Admin Pannel:**
+
+- go to http://127.0.0.1:8000/admin page:
+    
+     ```
+     Username : admin
+     password : 123
+     ```
+**Other Users:**
+
+| User | Username        | Password |
+|------|-----------------|----------|
+| 01   | sifemahmudsimon | 1111     |
+| 02   | wazedali        | 1234     |
+| 03   | tasnumpromi     | 0000     |
+
 ### Note
 All the dependencies are already installed. if theres any problem occures during project run, Ensure that all dependencies are installed as per the project's requirements before executing the above steps.
